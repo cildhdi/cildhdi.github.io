@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>
+    数学表达式解析（二） | Cildhdi&#39;s BB space
+  </title>
+  <meta name="description" content="">
+  
+  <meta name="keywords" content="
+  
+  ">
+  
+  <meta name="author" content="Miles Yang">
+
+  <meta http-equiv="Cache-Control" content="no-transform"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+  <link rel="icon" type="image/x-icon" href="">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+
+  
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.25-csp/vue.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+</head>
+
+<body id="replica-app">
+
+<nav class="navbar-wrapper">
+  <div class="navbar">
+    <div class="container clearfix">
+      <a href="/" class="navbar-logo"><i class="fa fa-github"></i></a>
+
+      <div class="navbar-search float-left desktop-only">
+        <div class="navbar-search-form">
+          <label for="gsc-i-id1">This website</label>
+          <div id="google-search">
+            <gcse:search></gcse:search>
+          </div>
+        </div>
+      </div>
+
+      <ul class="navbar-nav float-left">
+        
+        <li><a href="/archives">Archives</a></li>
+        
+        
+        <li><a href="/categories">Categories</a></li>
+        
+        
+        <li><a href="/tags">Tags</a></li>
+        
+        
+        <li class="desktop-only"><a href="/atom.xml" target="_blank">RSS</a></li>
+        
+      </ul>
+
+      <ul class="navbar-nav user-nav float-right desktop-only">
+        <li class="user-nav-notification">
+          <a><span class="user-nav-unread"></span><i class="fa fa-bell"></i></a>
+        </li>
+        <li>
+          <a><i class="fa fa-plus"></i> <i class="fa fa-caret-down"></i></a>
+        </li>
+        <li class="user-nav-logo">
+          <a><img src="https://avatars2.githubusercontent.com/u/28710394?s=460&amp;v=4"> <i class="fa fa-caret-down"></i></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="main-container">
+  <header class="header-wrapper desktop-only">
+  <div class="container header-site-detail">
+    <ul class="header-toolbar">
+      <li class="clearfix">
+        <a href="/archives" class="header-toolbar-left"><i
+                  class="fa fa-file-text"></i> Posts </a>
+        <a href="/archives"
+           class="header-toolbar-right"> 12 </a>
+      </li>
+      <li>
+        <a href="/tags" class="header-toolbar-left"><i
+                  class="fa fa-tags"></i> Tags </a>
+        <a href="/tags"
+           class="header-toolbar-right"> 7 </a>
+      </li>
+      <li>
+        <a href="/categories" class="header-toolbar-left"><i
+                  class="fa fa-folder-open"></i> Categories </a>
+        <a href="/categories"
+           class="header-toolbar-right"> 0 </a>
+      </li>
+    </ul>
+    <h2 class="header-title">
+      <i class="fa fa-book text-muted"></i>
+      <a href="/">Cildhdi&#39;s BB space</a>
+      
+      
+    </h2>
+  </div>
+
+  <div class="container">
+    <div class="header-tab-wrapper clearfix">
+      <span class="header-tab header-tab-selected"><i class="fa fa-thumbs-o-up"></i> Like</span>
+      <span class="header-tab"><i class="fa fa-share-alt"></i> Share</span>
+      <span class="header-tab"><i class="fa fa-comments-o"></i> Discussion</span>
+      <span class="header-tab"><i class="fa fa-bookmark-o"></i> Bookmark </span>
+      <span class="header-tab"><i class="fa fa-smile-o"></i> Smile <i class="fa fa-caret-down"></i></span>
+    </div>
+  </div>
+</header>
+
+
+<div class="post-container container">
+  <h3>
+    <i class="fa fa-user-o"></i>
+    Miles Yang
+
+    <span class="post-date float-right" title="{{moment(1526615623000).format('MMM DD, YYYY, h:mm:ss A')}}">
+      <i class="fa fa-pencil-square-o"></i>
+      {{moment(1526615623000).fromNow()}}
+    </span>
+  </h3>
+
+  <article class="post-content">
+    <h1>数学表达式解析（二）</h1>
+    <p>​    之前已经解决了函数表达式的存储问题，通过简单的基础函数类型，构造出复杂的表达式，例如有表达式：</p>
+<script type="math/tex; mode=display">
+x*(x+1)^2+5*x</script><p>可以拆分为<script type="math/tex">x*(x+1)^2</script>和<script type="math/tex">5*x</script>，<script type="math/tex">x*(x+1)^2</script>可拆分为<script type="math/tex">x</script>和<script type="math/tex">(x+1)^2</script>，<script type="math/tex">(x+1)^2</script>可拆为<script type="math/tex">x+1</script>和<script type="math/tex">2</script>。按照表达式的存储方式来构造：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//构造（x*(x+1)^2）:</span></span><br><span class="line"><span class="keyword">auto</span> pow_expr = <span class="built_in">std</span>::make_shared&lt;fp::power_function&gt;(<span class="built_in">std</span>::make_shared&lt;fp::add_function&gt;(<span class="built_in">std</span>::make_shared&lt;fp::independent_variable&gt;(<span class="string">"x"</span>), <span class="built_in">std</span>::make_shared&lt;fp::constant_function&gt;(<span class="number">1</span>)), <span class="built_in">std</span>::make_shared&lt;fp::constant_function&gt;(<span class="number">2</span>));</span><br><span class="line"><span class="keyword">auto</span> expr1 = <span class="built_in">std</span>::make_shared&lt;fp::multiply_function&gt;(<span class="built_in">std</span>::make_shared&lt;fp::independent_variable&gt;(<span class="string">"x"</span>), pow_expr);</span><br><span class="line"><span class="comment">//构造（5*x）:</span></span><br><span class="line"><span class="keyword">auto</span> expr2 = <span class="built_in">std</span>::make_shared&lt;fp::multiply_function&gt;(<span class="built_in">std</span>::make_shared&lt;fp::constant_function&gt;(<span class="number">5</span>), <span class="built_in">std</span>::make_shared&lt;fp::independent_variable&gt;(<span class="string">"x"</span>));</span><br><span class="line"><span class="comment">//组合：</span></span><br><span class="line"><span class="keyword">auto</span> final_expr = <span class="built_in">std</span>::make_shared&lt;fp::add_function&gt;(expr1, expr2);</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; final_expr-&gt;str() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; final_expr-&gt;derivative()-&gt;str();</span><br></pre></td></tr></table></figure></p>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">((x*((x+1)^2))+(5*x))</span><br><span class="line">(((1*((x+1)^2))+(x*(((x+1)^2)*((0*(ln(x+1)))+(2*((1/(x+1))*(1+0)))))))+((0*x)+(5*1)))</span><br></pre></td></tr></table></figure>
+<p>这是在已知表达式来构造的情况，然而一般情况下，用户输入什么表达式都是未知的，因此需要对字符串进行解析来自动生成表达式。</p>
+<h2 id="解析函数"><a href="#解析函数" class="headerlink" title="解析函数"></a>解析函数</h2><p>​    一般表达式都是多层嵌套的，所以使用递归来解析函数表达式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">base_function_ptr <span class="title">function_parse</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">string</span> func_str)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="初步处理"><a href="#初步处理" class="headerlink" title="初步处理"></a>初步处理</h3><p>​    传入的字符串可能含有空格或者被括号括起来，例如<script type="math/tex">( x + 1 )</script>，不方便处理，所以，首先要去空格和最外层括号：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">func_str.erase(<span class="built_in">std</span>::remove_if(func_str.begin(), func_str.end(),</span><br><span class="line">	[](<span class="keyword">char</span> c) &#123;<span class="keyword">return</span> c == <span class="string">' '</span>; &#125;), func_str.end());</span><br><span class="line"><span class="keyword">while</span> ((!func_str.empty()) &amp;&amp; func_str.at(<span class="number">0</span>) == <span class="string">'('</span>&amp;&amp;get_matching_bracket(func_str, <span class="number">0</span>) == (func_str.size() - <span class="number">1</span>))</span><br><span class="line">&#123;</span><br><span class="line">	func_str.erase(func_str.begin());</span><br><span class="line">	func_str.pop_back();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="ln-sin-cos的解析"><a href="#ln-sin-cos的解析" class="headerlink" title="ln,sin,cos的解析"></a>ln,sin,cos的解析</h3><p>​    如果传入的字符串最外层已经是一个数学函数了，那么就直接返回构造的指针。观察这样的字符串：<script type="math/tex">ln(x+1)</script>，可以看出基本特征：</p>
+<ul>
+<li><p>最后一个字符为’)’</p>
+</li>
+<li><p>与最后一个’)’相对应的’(‘位置之前的字符串不含有括号以及其他操作符</p>
+</li>
+<li><p>与最后一个’)’相对应的’(‘位置之间的字符串也是一个表达式</p>
+<p>按照这三条规则编写：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (func_str.at(func_str.size() - <span class="number">1</span>) == <span class="string">')'</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> fb = get_matching_bracket(func_str, func_str.size() - <span class="number">1</span>);</span><br><span class="line">	<span class="keyword">if</span> (fb == <span class="number">-1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="built_in">std</span>::invalid_argument(<span class="string">"fail to parse"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">auto</span> func_name = func_str.substr(<span class="number">0</span>, fb);</span><br><span class="line">	<span class="keyword">if</span> (!(include_brackets(func_name) || include_operators(func_name)))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (func_name == <span class="string">"ln"</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="built_in">std</span>::make_shared&lt;ln_function&gt;(function_parse(func_str.substr(fb, func_str.size() - fb)));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (func_name == <span class="string">"sin"</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="built_in">std</span>::make_shared&lt;sin_function&gt;(function_parse(func_str.substr(fb, func_str.size() - fb)));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (func_name == <span class="string">"cos"</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="built_in">std</span>::make_shared&lt;cos_function&gt;(function_parse(func_str.substr(fb, func_str.size() - fb)));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="递归终止条件"><a href="#递归终止条件" class="headerlink" title="递归终止条件"></a>递归终止条件</h3><p>​    递归终止只有两种可能性，一是传入的字符串就是自变量，二是一个常数。所以通过是否包含操作符和是否数字来判断：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!include_operators(func_str))</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (is_number(func_str))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">std</span>::make_shared&lt;constant_function&gt;(<span class="built_in">std</span>::atof(func_str.c_str()));</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">std</span>::make_shared&lt;independent_variable&gt;(func_str);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="按照优先级解析表达式"><a href="#按照优先级解析表达式" class="headerlink" title="按照优先级解析表达式"></a>按照优先级解析表达式</h3><p>​    循环遍历表达式字符串，如果遇到+或者-就把当前位置添加到数组中。另外，如果遇到’(‘，就直接跳转到相对应的’)’位置，这样就解决了括号的问题。然后使用数组里的位置将字符串分段，每段再递归调用function_pasre，最后使用add_function或者minus_function把它们全部组合并直接返回。如果数组内没有元素，就按相同的方法来依次解析乘除和乘方。</p>
+<h2 id="项目地址"><a href="#项目地址" class="headerlink" title="项目地址"></a><a href="https://github.com/cildhdi/function_parsing" target="_blank" rel="noopener">项目地址</a></h2><p>示例：main.cpp  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"function_parsing.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">string</span> str;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"input f(x)= "</span>;</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; str;</span><br><span class="line">	<span class="keyword">try</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">auto</span> f = fp::function_parse(str);</span><br><span class="line">		<span class="keyword">auto</span> fd = f-&gt;derivative();</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"f(x)="</span> &lt;&lt; f-&gt;str() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"f'(x)="</span> &lt;&lt; fd-&gt;str() &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">		<span class="keyword">double</span> x;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"input x= "</span>;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cin</span> &gt;&gt; x;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"f("</span> &lt;&lt; x &lt;&lt; <span class="string">")="</span> &lt;&lt; f-&gt;value(x) &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"f'("</span> &lt;&lt; x &lt;&lt; <span class="string">")="</span> &lt;&lt; fd-&gt;value(x) &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">catch</span> (<span class="built_in">std</span>::exception&amp; e)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"fail to parse:"</span> &lt;&lt; e.what();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输入x+x*sin(x+1)/3 与 3，则有输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">input f(x)= x+x*sin(x+1)/3</span><br><span class="line">f(x)=(x+((x*(sin(x+1)))/3))</span><br><span class="line">f&apos;(x)=(1+(((((1*(sin(x+1)))+(x*((cos(x+1))*(1+0))))*3)-((x*(sin(x+1)))*0))/(3*3)))</span><br><span class="line">input x= 3</span><br><span class="line">f(3)=2.2432</span><br><span class="line">f&apos;(3)=0.0940889</span><br></pre></td></tr></table></figure>
+  </article>
+</div>
+
+
+    
+
+
+
+
+</div>
+
+<div class="footer-wrapper container">
+  <footer class="footer clearfix">
+    <div class="clearfix">
+    <a href="https://miles-yang.top" class="footer-logo">
+      <i class="fa fa-github"></i>
+    </a>
+    <ul class="footer-social-link">
+      <li>© 2019 Miles Yang</li>
+      <li><a href="https://miles-yang.top">Home</a></li>
+      
+    </ul>
+    <div class="footer-theme-info">
+      Theme <a href="//github.com/sabrinaluo/hexo-theme-replica">Replica</a>
+      by <a href="//github.com/sabrinaluo">Hiitea</a> ❤ Powered by Hexo
+    </div>
+    </div>
+    
+  </footer>
+</div>
+
+
+
+
+<script src="/js/main.js"></script>
+
+</body>
+</html>

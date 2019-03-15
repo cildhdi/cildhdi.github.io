@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>
+    placement new | Cildhdi&#39;s BB space
+  </title>
+  <meta name="description" content="">
+  
+  <meta name="keywords" content="
+  C++
+  ">
+  
+  <meta name="author" content="Miles Yang">
+
+  <meta http-equiv="Cache-Control" content="no-transform"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+  <link rel="icon" type="image/x-icon" href="">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+
+  
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.25-csp/vue.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+</head>
+
+<body id="replica-app">
+
+<nav class="navbar-wrapper">
+  <div class="navbar">
+    <div class="container clearfix">
+      <a href="/" class="navbar-logo"><i class="fa fa-github"></i></a>
+
+      <div class="navbar-search float-left desktop-only">
+        <div class="navbar-search-form">
+          <label for="gsc-i-id1">This website</label>
+          <div id="google-search">
+            <gcse:search></gcse:search>
+          </div>
+        </div>
+      </div>
+
+      <ul class="navbar-nav float-left">
+        
+        <li><a href="/archives">Archives</a></li>
+        
+        
+        <li><a href="/categories">Categories</a></li>
+        
+        
+        <li><a href="/tags">Tags</a></li>
+        
+        
+        <li class="desktop-only"><a href="/atom.xml" target="_blank">RSS</a></li>
+        
+      </ul>
+
+      <ul class="navbar-nav user-nav float-right desktop-only">
+        <li class="user-nav-notification">
+          <a><span class="user-nav-unread"></span><i class="fa fa-bell"></i></a>
+        </li>
+        <li>
+          <a><i class="fa fa-plus"></i> <i class="fa fa-caret-down"></i></a>
+        </li>
+        <li class="user-nav-logo">
+          <a><img src="https://avatars2.githubusercontent.com/u/28710394?s=460&amp;v=4"> <i class="fa fa-caret-down"></i></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="main-container">
+  <header class="header-wrapper desktop-only">
+  <div class="container header-site-detail">
+    <ul class="header-toolbar">
+      <li class="clearfix">
+        <a href="/archives" class="header-toolbar-left"><i
+                  class="fa fa-file-text"></i> Posts </a>
+        <a href="/archives"
+           class="header-toolbar-right"> 12 </a>
+      </li>
+      <li>
+        <a href="/tags" class="header-toolbar-left"><i
+                  class="fa fa-tags"></i> Tags </a>
+        <a href="/tags"
+           class="header-toolbar-right"> 7 </a>
+      </li>
+      <li>
+        <a href="/categories" class="header-toolbar-left"><i
+                  class="fa fa-folder-open"></i> Categories </a>
+        <a href="/categories"
+           class="header-toolbar-right"> 0 </a>
+      </li>
+    </ul>
+    <h2 class="header-title">
+      <i class="fa fa-book text-muted"></i>
+      <a href="/">Cildhdi&#39;s BB space</a>
+      
+      
+    </h2>
+  </div>
+
+  <div class="container">
+    <div class="header-tab-wrapper clearfix">
+      <span class="header-tab header-tab-selected"><i class="fa fa-thumbs-o-up"></i> Like</span>
+      <span class="header-tab"><i class="fa fa-share-alt"></i> Share</span>
+      <span class="header-tab"><i class="fa fa-comments-o"></i> Discussion</span>
+      <span class="header-tab"><i class="fa fa-bookmark-o"></i> Bookmark </span>
+      <span class="header-tab"><i class="fa fa-smile-o"></i> Smile <i class="fa fa-caret-down"></i></span>
+    </div>
+  </div>
+</header>
+
+
+<div class="post-container container">
+  <h3>
+    <i class="fa fa-user-o"></i>
+    Miles Yang
+
+    <span class="post-date float-right" title="{{moment(1534564338000).format('MMM DD, YYYY, h:mm:ss A')}}">
+      <i class="fa fa-pencil-square-o"></i>
+      {{moment(1534564338000).fromNow()}}
+    </span>
+  </h3>
+
+  <article class="post-content">
+    <h1>placement new</h1>
+    <p>在《more effective c++》里讨论默认构造函数的部分中，提到了一种对象构造方法：placement new。</p>
+<h2 id="new"><a href="#new" class="headerlink" title="new"></a>new</h2><p>比较常用的new操作符的流程大致应该是</p>
+<ul>
+<li>分配内存</li>
+<li>*调用构造函数构造对象</li>
+<li>*返回内存区域的地址</li>
+</ul>
+<p>为什么说这是大致流程呢，因为上面打了星号的两步执行顺序是不确定的，可能在对象还没有构造完成的时候就已经返回了内存地址，这涉及到cpu的乱序执行，学习过Singleton模式的应该都了解过。</p>
+<p>与之对应的delete操作符的流程也应该是</p>
+<ul>
+<li><p>调用析构函数析构对象</p>
+</li>
+<li><p>回收内存</p>
+</li>
+</ul>
+<h2 id="placement-new"><a href="#placement-new" class="headerlink" title="placement new"></a>placement new</h2><blockquote>
+<p>布置 new：若提供 <code>placement_params</code> ，则将它们作为额外参数传递给分配函数。这些分配函数被称作“布置 new ”，根据标准分配函数 void* <a href="http://zh.cppreference.com/w/cpp/memory/new/operator_new" target="_blank" rel="noopener">operator new</a>(<a href="http://zh.cppreference.com/w/cpp/types/size_t" target="_blank" rel="noopener">std::size_t</a>, void*) ，它们简单地返回不更改的第二参数。这被用于在已分配的存储构造对象：</p>
+</blockquote>
+<p>placement new代表的就应该是调用构造函数构造对象这一步，因此我们使用 placement new之前需要手动分配内存，之后也需要手动析构对象和释放内存。</p>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>开始我写的代码是这个样子的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span>* rm = <span class="keyword">operator</span> <span class="keyword">new</span>[](<span class="number">10</span> * <span class="keyword">sizeof</span>(<span class="built_in">std</span>::<span class="built_in">string</span>));</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	<span class="keyword">new</span>(rm + i * <span class="keyword">sizeof</span>(<span class="built_in">std</span>::<span class="built_in">string</span>)) <span class="built_in">std</span>::<span class="built_in">string</span>(<span class="built_in">std</span>::to_string(i));</span><br></pre></td></tr></table></figure>
+<p>报错：</p>
+<blockquote>
+<p>error C2036: “void *”: 未知的大小</p>
+</blockquote>
+<p>这是因为(void* + int)编译器无法计算偏移的大小，虽然我写上了i * sizeof(std::string)，编译器也无法通过void*来计算出具体值。</p>
+<p>修改之后：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分配内存</span></span><br><span class="line"><span class="keyword">void</span>* rm = <span class="keyword">operator</span> <span class="keyword">new</span>[](<span class="number">10</span> * <span class="keyword">sizeof</span>(<span class="built_in">std</span>::<span class="built_in">string</span>));</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span>* ps = <span class="keyword">static_cast</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>*&gt;(rm);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	<span class="comment">//placement new</span></span><br><span class="line">	<span class="keyword">new</span>(ps + i) <span class="built_in">std</span>::<span class="built_in">string</span>(<span class="built_in">std</span>::to_string(i));</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; *(ps + i) &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">9</span>; i &gt;= <span class="number">0</span>; i--)</span><br><span class="line">	<span class="comment">//手动析构</span></span><br><span class="line">	(ps + i)-&gt;~basic_string();</span><br><span class="line"><span class="comment">//释放内存</span></span><br><span class="line"><span class="keyword">operator</span> <span class="keyword">delete</span>[](rm);</span><br></pre></td></tr></table></figure>
+<p>可能有人会疑惑上面手动析构的部分为啥调用的析构函数是~basic_string()而不是~string()，这其实是因为并不存在string这个类（我用的是vs2017，不知道其他编译器的情况，提一下防止打脸），在头文件中有如下定义：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="built_in">string</span> = basic_string&lt;<span class="keyword">char</span>, char_traits&lt;<span class="keyword">char</span>&gt;, allocator&lt;<span class="keyword">char</span>&gt;&gt;;</span><br><span class="line"><span class="keyword">using</span> wstring = basic_string&lt;<span class="keyword">wchar_t</span>, char_traits&lt;<span class="keyword">wchar_t</span>&gt;, allocator&lt;<span class="keyword">wchar_t</span>&gt;&gt;;</span><br></pre></td></tr></table></figure>
+<p>string只是后面那个模板特化的一个别名，所以调用的析构函数是~basic_string()。</p>
+<p>虽然可以手动调用析构函数，但是构造函数是不可以显式调用的，这也是使用placement new 的原因。</p>
+<p>另外，对于值对象，比如int等，是可以不用placement new来直接使用的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//分配内存</span></span><br><span class="line"><span class="keyword">void</span>* rm = <span class="keyword">operator</span> <span class="keyword">new</span>[](<span class="number">10</span> * <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line"><span class="keyword">int</span>* is = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>*&gt;(rm);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	*(is + i) = i;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	<span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; *(is + i) &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="comment">//释放内存</span></span><br><span class="line"><span class="keyword">operator</span> <span class="keyword">delete</span>[](rm);</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">0</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td></tr></table></figure>
+
+  </article>
+</div>
+
+
+    
+
+
+
+
+</div>
+
+<div class="footer-wrapper container">
+  <footer class="footer clearfix">
+    <div class="clearfix">
+    <a href="https://miles-yang.top" class="footer-logo">
+      <i class="fa fa-github"></i>
+    </a>
+    <ul class="footer-social-link">
+      <li>© 2019 Miles Yang</li>
+      <li><a href="https://miles-yang.top">Home</a></li>
+      
+    </ul>
+    <div class="footer-theme-info">
+      Theme <a href="//github.com/sabrinaluo/hexo-theme-replica">Replica</a>
+      by <a href="//github.com/sabrinaluo">Hiitea</a> ❤ Powered by Hexo
+    </div>
+    </div>
+    
+  </footer>
+</div>
+
+
+
+
+<script src="/js/main.js"></script>
+
+</body>
+</html>

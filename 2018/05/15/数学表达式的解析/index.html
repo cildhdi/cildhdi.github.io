@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>
+    数学表达式的解析 | Cildhdi&#39;s BB space
+  </title>
+  <meta name="description" content="">
+  
+  <meta name="keywords" content="
+  
+  ">
+  
+  <meta name="author" content="Miles Yang">
+
+  <meta http-equiv="Cache-Control" content="no-transform"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+  <link rel="icon" type="image/x-icon" href="">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+
+  
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.25-csp/vue.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+</head>
+
+<body id="replica-app">
+
+<nav class="navbar-wrapper">
+  <div class="navbar">
+    <div class="container clearfix">
+      <a href="/" class="navbar-logo"><i class="fa fa-github"></i></a>
+
+      <div class="navbar-search float-left desktop-only">
+        <div class="navbar-search-form">
+          <label for="gsc-i-id1">This website</label>
+          <div id="google-search">
+            <gcse:search></gcse:search>
+          </div>
+        </div>
+      </div>
+
+      <ul class="navbar-nav float-left">
+        
+        <li><a href="/archives">Archives</a></li>
+        
+        
+        <li><a href="/categories">Categories</a></li>
+        
+        
+        <li><a href="/tags">Tags</a></li>
+        
+        
+        <li class="desktop-only"><a href="/atom.xml" target="_blank">RSS</a></li>
+        
+      </ul>
+
+      <ul class="navbar-nav user-nav float-right desktop-only">
+        <li class="user-nav-notification">
+          <a><span class="user-nav-unread"></span><i class="fa fa-bell"></i></a>
+        </li>
+        <li>
+          <a><i class="fa fa-plus"></i> <i class="fa fa-caret-down"></i></a>
+        </li>
+        <li class="user-nav-logo">
+          <a><img src="https://avatars2.githubusercontent.com/u/28710394?s=460&amp;v=4"> <i class="fa fa-caret-down"></i></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="main-container">
+  <header class="header-wrapper desktop-only">
+  <div class="container header-site-detail">
+    <ul class="header-toolbar">
+      <li class="clearfix">
+        <a href="/archives" class="header-toolbar-left"><i
+                  class="fa fa-file-text"></i> Posts </a>
+        <a href="/archives"
+           class="header-toolbar-right"> 12 </a>
+      </li>
+      <li>
+        <a href="/tags" class="header-toolbar-left"><i
+                  class="fa fa-tags"></i> Tags </a>
+        <a href="/tags"
+           class="header-toolbar-right"> 7 </a>
+      </li>
+      <li>
+        <a href="/categories" class="header-toolbar-left"><i
+                  class="fa fa-folder-open"></i> Categories </a>
+        <a href="/categories"
+           class="header-toolbar-right"> 0 </a>
+      </li>
+    </ul>
+    <h2 class="header-title">
+      <i class="fa fa-book text-muted"></i>
+      <a href="/">Cildhdi&#39;s BB space</a>
+      
+      
+    </h2>
+  </div>
+
+  <div class="container">
+    <div class="header-tab-wrapper clearfix">
+      <span class="header-tab header-tab-selected"><i class="fa fa-thumbs-o-up"></i> Like</span>
+      <span class="header-tab"><i class="fa fa-share-alt"></i> Share</span>
+      <span class="header-tab"><i class="fa fa-comments-o"></i> Discussion</span>
+      <span class="header-tab"><i class="fa fa-bookmark-o"></i> Bookmark </span>
+      <span class="header-tab"><i class="fa fa-smile-o"></i> Smile <i class="fa fa-caret-down"></i></span>
+    </div>
+  </div>
+</header>
+
+
+<div class="post-container container">
+  <h3>
+    <i class="fa fa-user-o"></i>
+    Miles Yang
+
+    <span class="post-date float-right" title="{{moment(1526393234000).format('MMM DD, YYYY, h:mm:ss A')}}">
+      <i class="fa fa-pencil-square-o"></i>
+      {{moment(1526393234000).fromNow()}}
+    </span>
+  </h3>
+
+  <article class="post-content">
+    <h1>数学表达式的解析</h1>
+    <h2 id="项目地址"><a href="#项目地址" class="headerlink" title="项目地址"></a><a href="https://github.com/cildhdi/function_parsing" target="_blank" rel="noopener">项目地址</a></h2><p>在做之前bing了一下数学表达式的解析，搜到的一般都是对纯数字表达式的解析，没有看到对含有自变量的表达式的解析，反正闲得慌，就随便写了写。</p>
+<h2 id="需要实现的"><a href="#需要实现的" class="headerlink" title="需要实现的"></a>需要实现的</h2><p>在一个最最基本的纯数字表达式里，数字肯定是有的，还有一些操作符（比如加减乘除和乘方等），所以这些肯定是要支持的。还有一个比较头疼的就是括号，它可以改变前面说的一些操作符的优先级，应该是要重点解决的。另外，还要能够含有自变量，在解析之后，能够通过传入自变量，获取函数表达式的值，如果能实现，常规的纯数字表达式应该也没有问题，相当于一个常量函数。对函数表达式求导本来是开始没打算实现的，后来发现存储函数表达式的方式刚好很适合实现这个功能，就顺便写了一下。</p>
+<h2 id="开始敲敲敲辣"><a href="#开始敲敲敲辣" class="headerlink" title="开始敲敲敲辣"></a>开始敲敲敲辣</h2><h3 id="函数表达式的存储"><a href="#函数表达式的存储" class="headerlink" title="函数表达式的存储"></a>函数表达式的存储</h3><p>​    一个比较复杂的函数表达式，例如</p>
+<script type="math/tex; mode=display">
+x*(x+1)^2+5*x</script><p>可以看作两个表达式之和，这两个表达式又可以拆分为更多的表达式，它们的类型都不一定相同，可能是加法也可能是乘法，但是都能够对它们进行求值（value）操作。相同的操作，对于不同的表达式有不同的实现方法，到这里就能自然地想到多态了。所以，定义一个函数的抽象基类base_function：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">base_function</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">virtual</span> <span class="built_in">std</span>::<span class="function"><span class="built_in">string</span> <span class="title">str</span><span class="params">()</span> </span>= <span class="number">0</span>;<span class="comment">//返回表达式字符串</span></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">double</span> <span class="title">value</span><span class="params">(<span class="keyword">double</span> x)</span> </span>= <span class="number">0</span>;<span class="comment">//返回值</span></span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> base_function_ptr <span class="title">derivative</span><span class="params">()</span> </span>= <span class="number">0</span>;<span class="comment">//返回导函数</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>其他的一些类：constant_function，add_function，minus_function，multiply_function，divide_function等都继承自它，另外一个子类independent_variable就是用于标识自变量的，在value(x)的实现里直接返回了参数值x。</p>
+<p>​    在上述子类中，对应的操作符的操作数全部都被看作函数表达式，因此也是用base_function_ptr来保存，例如add_function：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//function_parsing.h</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">add_function</span> :</span><span class="keyword">public</span> base_function</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	base_function_ptr m_lhs;</span><br><span class="line">	base_function_ptr m_rhs;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	add_function(base_function_ptr lhs, base_function_ptr rhs);</span><br><span class="line">	<span class="built_in">std</span>::<span class="function"><span class="built_in">string</span> <span class="title">str</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">double</span> <span class="title">value</span><span class="params">(<span class="keyword">double</span> x)</span></span>;</span><br><span class="line">	<span class="function">base_function_ptr <span class="title">derivative</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//function_parsing.cpp</span></span><br><span class="line">add_function::add_function(base_function_ptr lhs, base_function_ptr rhs) :m_lhs(lhs), m_rhs(rhs)</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> add_function::str()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"("</span> + m_lhs-&gt;str() + <span class="string">"+"</span> + m_rhs-&gt;str() + <span class="string">")"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">double</span> add_function::value(<span class="keyword">double</span> x)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> m_lhs-&gt;value(x) + m_rhs-&gt;value(x);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">base_function_ptr add_function::derivative()</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">std</span>::make_shared&lt;add_function&gt;(m_lhs-&gt;derivative(), m_rhs-&gt;derivative());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其他的子类实现方式都类似，这样就能通过层层求值，获取整个函数表达式的值。</p>
+<p>​    上面的代码中，含有的derivative成员函数是用来求导函数的。求导这个功能，大部分实现都是通过取一个Δx，返回f(x)在x处的导数值，但是在上面的代码中，直接把求导法则写入了实现中，因而能够直接返回导函数，可通过value来获取导函数对应x的值。</p>
+
+  </article>
+</div>
+
+
+    
+
+
+
+
+</div>
+
+<div class="footer-wrapper container">
+  <footer class="footer clearfix">
+    <div class="clearfix">
+    <a href="https://miles-yang.top" class="footer-logo">
+      <i class="fa fa-github"></i>
+    </a>
+    <ul class="footer-social-link">
+      <li>© 2019 Miles Yang</li>
+      <li><a href="https://miles-yang.top">Home</a></li>
+      
+    </ul>
+    <div class="footer-theme-info">
+      Theme <a href="//github.com/sabrinaluo/hexo-theme-replica">Replica</a>
+      by <a href="//github.com/sabrinaluo">Hiitea</a> ❤ Powered by Hexo
+    </div>
+    </div>
+    
+  </footer>
+</div>
+
+
+
+
+<script src="/js/main.js"></script>
+
+</body>
+</html>

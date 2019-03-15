@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>
+    c++模板技巧（持续更新） | Cildhdi&#39;s BB space
+  </title>
+  <meta name="description" content="">
+  
+  <meta name="keywords" content="
+  c++
+  ">
+  
+  <meta name="author" content="Miles Yang">
+
+  <meta http-equiv="Cache-Control" content="no-transform"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+  <link rel="icon" type="image/x-icon" href="">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+
+  
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.25-csp/vue.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+</head>
+
+<body id="replica-app">
+
+<nav class="navbar-wrapper">
+  <div class="navbar">
+    <div class="container clearfix">
+      <a href="/" class="navbar-logo"><i class="fa fa-github"></i></a>
+
+      <div class="navbar-search float-left desktop-only">
+        <div class="navbar-search-form">
+          <label for="gsc-i-id1">This website</label>
+          <div id="google-search">
+            <gcse:search></gcse:search>
+          </div>
+        </div>
+      </div>
+
+      <ul class="navbar-nav float-left">
+        
+        <li><a href="/archives">Archives</a></li>
+        
+        
+        <li><a href="/categories">Categories</a></li>
+        
+        
+        <li><a href="/tags">Tags</a></li>
+        
+        
+        <li class="desktop-only"><a href="/atom.xml" target="_blank">RSS</a></li>
+        
+      </ul>
+
+      <ul class="navbar-nav user-nav float-right desktop-only">
+        <li class="user-nav-notification">
+          <a><span class="user-nav-unread"></span><i class="fa fa-bell"></i></a>
+        </li>
+        <li>
+          <a><i class="fa fa-plus"></i> <i class="fa fa-caret-down"></i></a>
+        </li>
+        <li class="user-nav-logo">
+          <a><img src="https://avatars2.githubusercontent.com/u/28710394?s=460&amp;v=4"> <i class="fa fa-caret-down"></i></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="main-container">
+  <header class="header-wrapper desktop-only">
+  <div class="container header-site-detail">
+    <ul class="header-toolbar">
+      <li class="clearfix">
+        <a href="/archives" class="header-toolbar-left"><i
+                  class="fa fa-file-text"></i> Posts </a>
+        <a href="/archives"
+           class="header-toolbar-right"> 12 </a>
+      </li>
+      <li>
+        <a href="/tags" class="header-toolbar-left"><i
+                  class="fa fa-tags"></i> Tags </a>
+        <a href="/tags"
+           class="header-toolbar-right"> 7 </a>
+      </li>
+      <li>
+        <a href="/categories" class="header-toolbar-left"><i
+                  class="fa fa-folder-open"></i> Categories </a>
+        <a href="/categories"
+           class="header-toolbar-right"> 0 </a>
+      </li>
+    </ul>
+    <h2 class="header-title">
+      <i class="fa fa-book text-muted"></i>
+      <a href="/">Cildhdi&#39;s BB space</a>
+      
+      
+    </h2>
+  </div>
+
+  <div class="container">
+    <div class="header-tab-wrapper clearfix">
+      <span class="header-tab header-tab-selected"><i class="fa fa-thumbs-o-up"></i> Like</span>
+      <span class="header-tab"><i class="fa fa-share-alt"></i> Share</span>
+      <span class="header-tab"><i class="fa fa-comments-o"></i> Discussion</span>
+      <span class="header-tab"><i class="fa fa-bookmark-o"></i> Bookmark </span>
+      <span class="header-tab"><i class="fa fa-smile-o"></i> Smile <i class="fa fa-caret-down"></i></span>
+    </div>
+  </div>
+</header>
+
+
+<div class="post-container container">
+  <h3>
+    <i class="fa fa-user-o"></i>
+    Miles Yang
+
+    <span class="post-date float-right" title="{{moment(1535800733000).format('MMM DD, YYYY, h:mm:ss A')}}">
+      <i class="fa fa-pencil-square-o"></i>
+      {{moment(1535800733000).fromNow()}}
+    </span>
+  </h3>
+
+  <article class="post-content">
+    <h1>c++模板技巧（持续更新）</h1>
+    <p>下面是我在模板元编程的过程中的一些问题的解决办法，以后应该是遇到了有价值的就会添加到这里。</p>
+<h2 id="限制模板参数的类型"><a href="#限制模板参数的类型" class="headerlink" title="限制模板参数的类型"></a>限制模板参数的类型</h2><p>下面有一个简单的虚数模板类（省略了无关的东西）：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Complex</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	T v, r;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>我们希望别人在使用这个类的时候传递一个数值型的模板参数，尽管你在注释里写的清清楚楚，但也总是会有人什么类型都敢往里传。如果编译失败都还好说，但是如果传入的类型参数刚好符合要求（比如重载了+-*/等操作符）而编译通过了，那么问题很可能会在运行时出现，更加麻烦。因此我们要限制T的类型，这里使用了c++11的一个定义于头文件<a href="https://zh.cppreference.com/w/cpp/header/type_traits" target="_blank" rel="noopener"><type_traits></type_traits></a>中的<a href="https://zh.cppreference.com/w/cpp/types/is_arithmetic" target="_blank" rel="noopener">is_arithmetic</a> 模板结构以及 <a href="https://zh.cppreference.com/w/cpp/language/static_assert" target="_blank" rel="noopener">static_assert</a> 语句。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Complex</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	T v, r;</span><br><span class="line">	Complex()</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">static_assert</span>(<span class="built_in">std</span>::is_arithmetic&lt;T&gt;::value, <span class="string">"T should be numeric type"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这样当我试图用一个结构体类型来实例化时：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">MyStruct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">int</span> i, j;</span><br><span class="line">&#125;;</span><br><span class="line">Complex&lt;MyStruct&gt; c;</span><br></pre></td></tr></table></figure>
+<p>就会编译出错并显示我们指定的提示：</p>
+<blockquote>
+<p>error C2338: T should be numeric type<br>note: 编译 类 模板 成员函数 “Complex<main::mystruct>::Complex(void)” 时<br>note: 参见对正在编译的函数 模板 实例化“Complex<main::mystruct>::Complex(void)”的引用<br>note: 参见对正在编译的 类 模板 实例化 “Complex<main::mystruct>“ 的引用</main::mystruct></main::mystruct></main::mystruct></p>
+</blockquote>
+<p>除了is_arithmetic，在<type_traits>头文件中还有许多类似的模板结构，通过组合它们的value可以对类型产生多种多样的限制，另外还需要注意static_assert的第一个参数必须是编译期常量。</type_traits></p>
+<h2 id="类型推导"><a href="#类型推导" class="headerlink" title="类型推导"></a>类型推导</h2><p>用一个简单的代码片段来引入问题：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T1, <span class="keyword">typename</span> T2&gt;</span><br><span class="line"><span class="function">Type <span class="title">add</span><span class="params">(T1 a, T2 b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个非常简单的模板函数，但是它的返回值Type应该是T1或者是T2呢？如果T1 = T2 = int，那么毫无疑问Type就应该也是int，但是若T1 = int, T2 = double，那么Type就应该是double，那么怎么在代码里表现这种变化呢？有一种解决办法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T1, <span class="keyword">typename</span> T2&gt;</span><br><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">add</span><span class="params">(T1 a, T2 b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是利用了编译器的类型推导，通过a+b的值自动推导出返回值的类型：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="keyword">typeid</span>(add(<span class="number">1</span>, <span class="number">1.1</span>)).name();</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<blockquote>
+<p>double</p>
+</blockquote>
+<p>但是面对更加复杂的情况呢？例如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pos</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	T x, y;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">template</span>&lt;<span class="keyword">typename</span> _T&gt;</span><br><span class="line">	Type <span class="keyword">operator</span>+(<span class="keyword">const</span> Pos&lt;_T&gt;&amp; rhs)</span><br><span class="line">	&#123;</span><br><span class="line">		Type res = *<span class="keyword">this</span>;</span><br><span class="line">		res.x += rhs.x;</span><br><span class="line">		res.y += rhs.y;</span><br><span class="line">		<span class="keyword">return</span> res;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>其中的Type又应该是什么类型？显然上面直接return a + b的解决方法不行了，但是我们可以不用编译器来自动做类型推导，自己来写：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pos</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	T x, y;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">template</span>&lt;<span class="keyword">typename</span> _T&gt;</span><br><span class="line">	<span class="keyword">auto</span> <span class="keyword">operator</span>+(<span class="keyword">const</span> Pos&lt;_T&gt;&amp; rhs)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">using</span> E = <span class="keyword">decltype</span>(T() + _T());</span><br><span class="line">		Pos&lt;E&gt; res = *<span class="keyword">this</span>;</span><br><span class="line">		res.x += rhs.x;</span><br><span class="line">		res.y += rhs.y;</span><br><span class="line">		<span class="keyword">return</span> res;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>decltype能够推导出括号里的数据类型。另外，根据函数宏的特点，可以写如下宏：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> COMBINE_TYPE(T1, op, T2) decltype(T1() ## op ## T2())</span></span><br><span class="line"><span class="comment">//op为具体的操作符</span></span><br></pre></td></tr></table></figure>
+<p>那么上面的E可以直接由COMBINE_TYPE(T, +, _T)来代替，增加了可读性。</p>
+
+  </article>
+</div>
+
+
+    
+
+
+
+
+</div>
+
+<div class="footer-wrapper container">
+  <footer class="footer clearfix">
+    <div class="clearfix">
+    <a href="https://miles-yang.top" class="footer-logo">
+      <i class="fa fa-github"></i>
+    </a>
+    <ul class="footer-social-link">
+      <li>© 2019 Miles Yang</li>
+      <li><a href="https://miles-yang.top">Home</a></li>
+      
+    </ul>
+    <div class="footer-theme-info">
+      Theme <a href="//github.com/sabrinaluo/hexo-theme-replica">Replica</a>
+      by <a href="//github.com/sabrinaluo">Hiitea</a> ❤ Powered by Hexo
+    </div>
+    </div>
+    
+  </footer>
+</div>
+
+
+
+
+<script src="/js/main.js"></script>
+
+</body>
+</html>

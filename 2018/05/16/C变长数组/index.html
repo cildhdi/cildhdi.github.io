@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>
+    C变长数组 | Cildhdi&#39;s BB space
+  </title>
+  <meta name="description" content="">
+  
+  <meta name="keywords" content="
+  c,c++
+  ">
+  
+  <meta name="author" content="Miles Yang">
+
+  <meta http-equiv="Cache-Control" content="no-transform"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+  <link rel="icon" type="image/x-icon" href="">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  
+
+  
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.25-csp/vue.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+</head>
+
+<body id="replica-app">
+
+<nav class="navbar-wrapper">
+  <div class="navbar">
+    <div class="container clearfix">
+      <a href="/" class="navbar-logo"><i class="fa fa-github"></i></a>
+
+      <div class="navbar-search float-left desktop-only">
+        <div class="navbar-search-form">
+          <label for="gsc-i-id1">This website</label>
+          <div id="google-search">
+            <gcse:search></gcse:search>
+          </div>
+        </div>
+      </div>
+
+      <ul class="navbar-nav float-left">
+        
+        <li><a href="/archives">Archives</a></li>
+        
+        
+        <li><a href="/categories">Categories</a></li>
+        
+        
+        <li><a href="/tags">Tags</a></li>
+        
+        
+        <li class="desktop-only"><a href="/atom.xml" target="_blank">RSS</a></li>
+        
+      </ul>
+
+      <ul class="navbar-nav user-nav float-right desktop-only">
+        <li class="user-nav-notification">
+          <a><span class="user-nav-unread"></span><i class="fa fa-bell"></i></a>
+        </li>
+        <li>
+          <a><i class="fa fa-plus"></i> <i class="fa fa-caret-down"></i></a>
+        </li>
+        <li class="user-nav-logo">
+          <a><img src="https://avatars2.githubusercontent.com/u/28710394?s=460&amp;v=4"> <i class="fa fa-caret-down"></i></i></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="main-container">
+  <header class="header-wrapper desktop-only">
+  <div class="container header-site-detail">
+    <ul class="header-toolbar">
+      <li class="clearfix">
+        <a href="/archives" class="header-toolbar-left"><i
+                  class="fa fa-file-text"></i> Posts </a>
+        <a href="/archives"
+           class="header-toolbar-right"> 12 </a>
+      </li>
+      <li>
+        <a href="/tags" class="header-toolbar-left"><i
+                  class="fa fa-tags"></i> Tags </a>
+        <a href="/tags"
+           class="header-toolbar-right"> 7 </a>
+      </li>
+      <li>
+        <a href="/categories" class="header-toolbar-left"><i
+                  class="fa fa-folder-open"></i> Categories </a>
+        <a href="/categories"
+           class="header-toolbar-right"> 0 </a>
+      </li>
+    </ul>
+    <h2 class="header-title">
+      <i class="fa fa-book text-muted"></i>
+      <a href="/">Cildhdi&#39;s BB space</a>
+      
+      
+    </h2>
+  </div>
+
+  <div class="container">
+    <div class="header-tab-wrapper clearfix">
+      <span class="header-tab header-tab-selected"><i class="fa fa-thumbs-o-up"></i> Like</span>
+      <span class="header-tab"><i class="fa fa-share-alt"></i> Share</span>
+      <span class="header-tab"><i class="fa fa-comments-o"></i> Discussion</span>
+      <span class="header-tab"><i class="fa fa-bookmark-o"></i> Bookmark </span>
+      <span class="header-tab"><i class="fa fa-smile-o"></i> Smile <i class="fa fa-caret-down"></i></span>
+    </div>
+  </div>
+</header>
+
+
+<div class="post-container container">
+  <h3>
+    <i class="fa fa-user-o"></i>
+    Miles Yang
+
+    <span class="post-date float-right" title="{{moment(1526465882000).format('MMM DD, YYYY, h:mm:ss A')}}">
+      <i class="fa fa-pencil-square-o"></i>
+      {{moment(1526465882000).fromNow()}}
+    </span>
+  </h3>
+
+  <article class="post-content">
+    <h1>C变长数组</h1>
+    <p>​    在C/Cpp中定义一个数组：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Type <span class="built_in">array</span>[const_size];</span><br></pre></td></tr></table></figure>
+<p>其中const_size必须是一个常量或者常量表达式（constexpr），或许在不同的编译器上有不同的规定，但是在标准里，一个数组的长度必须是在一开始就确定下来的，后续就不能改变了。在C里想实现动态的数组来存放不定长的数据，可以使用malloc函数，下面就对它进行一个简单的包装以实现存放和访问不定长的数据。</p>
+<h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><p>​    一个变长的数组不可能只支持一种数据，在cpp里，使用泛型可以很简单的实现，但是在C里没有这样的特性，cpp中尖括号里的类型参数在C里只能手动的写到类型名称中去，另外考虑到对多种类型的支持，所以最后写出来可能会有很多的类型定义，比如：int_array，double_array，char_array …除了保存数组信息的结构定义，每一个类型的数组还有若干对应的处理函数，如果一个个写下来，代码量*&amp;￥#%，关键是这些代码的逻辑都是一样的，那么有没有办法来模仿泛型呢？答案当然是没有，好的本篇博客到此结束，谢谢观看。</p>
+<p>hhh，下面是解决办法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ARRAY_SPECIALIZATION(_Ty) \</span></span><br><span class="line">\</span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">Ty</span>##_<span class="title">array</span>\</span></span><br><span class="line"><span class="class">&#123;</span>\</span><br><span class="line">	_Ty* pointer = <span class="literal">NULL</span>;\</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> size = <span class="number">0</span>;\</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> capacity = <span class="number">0</span>; \</span><br><span class="line">&#125;; \</span><br></pre></td></tr></table></figure>
+<p>“\”实现多行宏定义，”##”在宏里表示简单的字符串拼接。通过这一段宏定义，并由以下代码来实现手动实例化：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ARRAY_SPECIALIZATION(<span class="keyword">int</span>)</span><br><span class="line">ARRAY_SPECIALIZATION(<span class="keyword">float</span>)</span><br><span class="line">ARRAY_SPECIALIZATION(<span class="keyword">long</span>)</span><br><span class="line">ARRAY_SPECIALIZATION(<span class="keyword">char</span>)</span><br><span class="line">ARRAY_SPECIALIZATION(<span class="keyword">double</span>)</span><br></pre></td></tr></table></figure>
+<p>这样就有了type_array结构的五份定义，接着上面的宏定义，编写出对应类型的处理函数。</p>
+<h2 id="变长"><a href="#变长" class="headerlink" title="变长"></a>变长</h2><p>​    变长的实现就很简单了。最开始初始化时malloc出一片大小为capacity*sizeof(type)的内存，添加数据时，如果size将要大于capacity了，就另外开辟更大的内存，并将原内存的数据复制到新内存中。相关代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> _Ty##_array_expand(_Ty##_array* _Ta)\</span><br><span class="line">&#123;\</span><br><span class="line">	<span class="keyword">if</span> (_Ta-&gt;capacity==<span class="number">0</span>)\</span><br><span class="line">		_Ta-&gt;capacity = <span class="number">1</span>;\</span><br><span class="line">	<span class="keyword">else</span>\</span><br><span class="line">		_Ta-&gt;capacity *= <span class="number">2</span>;\</span><br><span class="line">	_Ty* pNew=_Ty##_allocator(_Ta-&gt;capacity);\</span><br><span class="line">	assert(pNew);\</span><br><span class="line">	<span class="keyword">if</span> (_Ta-&gt;pointer!=<span class="literal">NULL</span>)\</span><br><span class="line">	&#123;\</span><br><span class="line">		<span class="built_in">memcpy</span>((<span class="keyword">void</span>*)pNew,(<span class="keyword">const</span> <span class="keyword">void</span>*)_Ta-&gt;pointer,_Ta-&gt;size*<span class="keyword">sizeof</span>(_Ty));\</span><br><span class="line">	&#125;\</span><br><span class="line">	_Ty##_deleter(_Ta-&gt;pointer);\</span><br><span class="line">	_Ta-&gt;pointer=pNew;\</span><br><span class="line">&#125;\</span><br><span class="line"><span class="keyword">void</span> _Ty##_array_add( _Ty##_array* _Ta,<span class="keyword">unsigned</span> <span class="keyword">int</span> num_of_ele, ...)\</span><br><span class="line">&#123;\</span><br><span class="line">	va_list args;\</span><br><span class="line">	va_start(args,num_of_ele);\</span><br><span class="line">	<span class="keyword">while</span>(_Ta-&gt;size + num_of_ele &gt; _Ta-&gt;capacity ) _Ty##_array_expand(_Ta);\</span><br><span class="line">	<span class="keyword">while</span>(num_of_ele!=<span class="number">0</span>)\</span><br><span class="line">	&#123;\</span><br><span class="line">		_Ty _Te=va_arg(args,_Ty);\</span><br><span class="line">		*(_Ta-&gt;pointer+_Ta-&gt;size)=_Te;\</span><br><span class="line">		_Ta-&gt;size++;\</span><br><span class="line">		num_of_ele--;\</span><br><span class="line">	&#125;\</span><br><span class="line">	va_end(args);\</span><br><span class="line">&#125;\</span><br></pre></td></tr></table></figure>
+<p>扩宽内存的策略是将当前大小扩大一倍，如果一次加入很多数据，扩宽函数将会执行很多次造成效率低下，修改也很简单，这里就不实现了。</p>
+<p>​    除此以外，添加元素使用了va_list，实现了类似printf的变参函数，有关va_list的用法请自己搜索。</p>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><h4 id="添加元素"><a href="#添加元素" class="headerlink" title="添加元素"></a>添加元素</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">type_array_add</span><span class="params">(type_array* _Ta,<span class="keyword">unsigned</span> <span class="keyword">int</span> num_of_ele, ...)</span></span>;</span><br></pre></td></tr></table></figure>
+<h4 id="访问元素"><a href="#访问元素" class="headerlink" title="访问元素"></a>访问元素</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">type <span class="title">type_array_at</span><span class="params">(type_array* _Ta,<span class="keyword">unsigned</span> <span class="keyword">int</span> index)</span></span>;</span><br><span class="line"><span class="function">type* <span class="title">type_array_pat</span><span class="params">(type_array* _Ta,<span class="keyword">unsigned</span> <span class="keyword">int</span> index)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>at访问元素值，pat访问元素指针。</p>
+<h4 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h4><p>使用qsort:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> _Ty##_cmp(<span class="keyword">const</span> <span class="keyword">void</span>* ln,<span class="keyword">const</span> <span class="keyword">void</span>* rn)\</span><br><span class="line">&#123;\</span><br><span class="line">	<span class="keyword">return</span> (*(_Ty*)ln)-(*(_Ty*)rn)&gt;<span class="number">0</span>?<span class="number">1</span>:<span class="number">0</span>;\</span><br><span class="line">&#125;\</span><br><span class="line"><span class="keyword">void</span> _Ty##_array_sort(_Ty##_array* _Ta)\</span><br><span class="line">&#123;\</span><br><span class="line">	qsort(_Ta-&gt;pointer,_Ta-&gt;size,<span class="keyword">sizeof</span>(_Ta),_Ty##_cmp);\</span><br><span class="line">&#125;\</span><br></pre></td></tr></table></figure>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>​    如果这样用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ARRAY_SPECIALIZATION(<span class="keyword">long</span> <span class="keyword">long</span>)</span><br></pre></td></tr></table></figure>
+<p>那么宏替代后的部分代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">long</span> <span class="title">long_array</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">long</span> <span class="keyword">long</span>* pointer = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> capacity = <span class="number">0</span>; </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>其中struct long long_array肯定是有问题的，如果类型中有空格，一种解决办法就是：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">long</span> <span class="keyword">long</span> ll;</span><br></pre></td></tr></table></figure>
+<p>就可以正常使用了。</p>
+<h3 id="代码地址"><a href="#代码地址" class="headerlink" title="代码地址"></a><a href="https://github.com/cildhdi/Code/blob/master/C_Array.h" target="_blank" rel="noopener">代码地址</a></h3><p>（图简单写在了一个头文件里）</p>
+
+  </article>
+</div>
+
+
+    
+
+
+
+
+</div>
+
+<div class="footer-wrapper container">
+  <footer class="footer clearfix">
+    <div class="clearfix">
+    <a href="https://miles-yang.top" class="footer-logo">
+      <i class="fa fa-github"></i>
+    </a>
+    <ul class="footer-social-link">
+      <li>© 2019 Miles Yang</li>
+      <li><a href="https://miles-yang.top">Home</a></li>
+      
+    </ul>
+    <div class="footer-theme-info">
+      Theme <a href="//github.com/sabrinaluo/hexo-theme-replica">Replica</a>
+      by <a href="//github.com/sabrinaluo">Hiitea</a> ❤ Powered by Hexo
+    </div>
+    </div>
+    
+  </footer>
+</div>
+
+
+
+
+<script src="/js/main.js"></script>
+
+</body>
+</html>
