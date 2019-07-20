@@ -1,0 +1,15 @@
+<footer id="footer">
+  <div class="footer-left">
+    <%= __('footer.copyright') %> &copy; <%= new Date().getFullYear() %> <%= config.author || config.title %>
+  </div>
+  <a href="http://www.miitbeian.gov.cn/">鄂ICP备19009500号-2</a>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <% for (var i in theme.nav) { %> 
+          <li><a href="<%- url_for(theme.nav[i]) %>"><%= __('nav.'+i).replace("nav.", "") %></a></li>
+        <% } %>
+      </ul>
+    </nav>
+  </div>
+</footer>
