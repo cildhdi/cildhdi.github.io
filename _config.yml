@@ -80,5 +80,5 @@ theme: cactus
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/cildhdi/cildhdi.github.io.git
+  repo: git@github.com:cildhdi/cildhdi.github.io.git
   branch: master
