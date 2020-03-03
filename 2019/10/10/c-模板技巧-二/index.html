@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="最近写了几题累死编译器系列的很有意思的模板题目（编译期求值），列一下新学到的一些黑魔法。 constexpr 函数例如以下函数，1234constexpr int factorial(int n)&amp;#123;    return n &amp;lt;= 1 ? 1 : (n * factorial(n - 1));&amp;#125; 如果 n 也是编译期常量，那么 factorial(n) 也是编译期常量，fa">
+<meta name="keywords" content="c++">
+<meta property="og:type" content="article">
+<meta property="og:title" content="c++模板技巧(二)">
+<meta property="og:url" content="https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/index.html">
+<meta property="og:site_name" content="Cildhdi&#39;s BB space">
+<meta property="og:description" content="最近写了几题累死编译器系列的很有意思的模板题目（编译期求值），列一下新学到的一些黑魔法。 constexpr 函数例如以下函数，1234constexpr int factorial(int n)&amp;#123;    return n &amp;lt;= 1 ? 1 : (n * factorial(n - 1));&amp;#125; 如果 n 也是编译期常量，那么 factorial(n) 也是编译期常量，fa">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-18T05:31:29.389Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="c++模板技巧(二)">
+<meta name="twitter:description" content="最近写了几题累死编译器系列的很有意思的模板题目（编译期求值），列一下新学到的一些黑魔法。 constexpr 函数例如以下函数，1234constexpr int factorial(int n)&amp;#123;    return n &amp;lt;= 1 ? 1 : (n * factorial(n - 1));&amp;#125; 如果 n 也是编译期常量，那么 factorial(n) 也是编译期常量，fa">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>c++模板技巧(二)</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2018/12/19/c++调用web接口完整解决方案/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&text=c++模板技巧(二)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&title=c++模板技巧(二)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&is_video=false&description=c++模板技巧(二)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=c++模板技巧(二)&body=Check out this article: https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&title=c++模板技巧(二)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&title=c++模板技巧(二)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&title=c++模板技巧(二)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&title=c++模板技巧(二)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&name=c++模板技巧(二)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#constexpr-函数"><span class="toc-number">1.</span> <span class="toc-text">constexpr 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译期-itoa"><span class="toc-number">2.</span> <span class="toc-text">编译期 itoa</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-enum"><span class="toc-number">3.</span> <span class="toc-text">使用 enum</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用前"><span class="toc-number">3.1.</span> <span class="toc-text">使用前</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用后"><span class="toc-number">3.2.</span> <span class="toc-text">使用后</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译器：我太难了"><span class="toc-number">4.</span> <span class="toc-text">编译器：我太难了</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        c++模板技巧(二)
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Cildhdi's BB space</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-10-10T10:51:30.000Z" itemprop="datePublished">2019-10-10</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/c/">c++</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>最近写了几题累死编译器系列的很有意思的模板题目（编译期求值），列一下新学到的一些黑魔法。</p>
+<h2 id="constexpr-函数"><a href="#constexpr-函数" class="headerlink" title="constexpr 函数"></a>constexpr 函数</h2><p>例如以下<a href="http://en.cppreference.com/w/cpp/language/constexpr" target="_blank" rel="noopener">函数</a>，<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">constexpr</span> <span class="keyword">int</span> <span class="title">factorial</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n &lt;= <span class="number">1</span> ? <span class="number">1</span> : (n * factorial(n - <span class="number">1</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果 n 也是编译期常量，那么 factorial(n) 也是编译期常量，<code>factorial(n)</code> 编译之后将会直接被替换为对应的值。</p>
+<h2 id="编译期-itoa"><a href="#编译期-itoa" class="headerlink" title="编译期 itoa"></a>编译期 itoa</h2><p>这个直接就是一道题目，要求实现一个类，<code>itoax&lt;x, y&gt;::value</code> 直接就是 x 在 y 进制的字符串表示，看到题我甚至怀疑真的可以实现吗… 同一个系列还有一道阶乘的题目，<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">int</span> x&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">factorial</span> &#123;</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> value = x * factorial&lt;x - <span class="number">1</span>&gt;::value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">int</span> x&gt;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> factorial&lt;x&gt;::value;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">factorial</span>&lt;0&gt; &#123;</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> value = <span class="number">1</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span> factorial&lt;<span class="number">0</span>&gt;::value;</span><br></pre></td></tr></table></figure></p>
+<p>我就在想会不会也是一个套路，利用模板递归获得上一个状态的 value，但是 char[] 和 char 没有办法再把他们在编译期组合成 char[]，实在没有头绪就放弃了，看了别人的解法自己写了一遍：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> integer = <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">constexpr</span> <span class="keyword">char</span> <span class="title">get_digit</span><span class="params">(integer n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> n &lt; <span class="number">10</span> ? <span class="string">'0'</span> + <span class="keyword">static_cast</span>&lt;<span class="keyword">char</span>&gt;(n) : <span class="string">'a'</span> + <span class="keyword">static_cast</span>&lt;<span class="keyword">char</span>&gt;(n) - <span class="number">10</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;integer X, integer Base = <span class="number">10</span>, <span class="keyword">char</span>... Cs&gt;</span><br><span class="line">struct itoaxx : <span class="keyword">public</span> itoaxx&lt;X / Base, Base, get_digit(X % Base), Cs...&gt; &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;integer Base, <span class="keyword">char</span>... Cs&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">itoaxx</span>&lt;0, Base, Cs...&gt; &#123;</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">char</span> value[] = &#123;Cs..., <span class="number">0</span>&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;integer Base, <span class="keyword">char</span>... Cs&gt;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">char</span> itoaxx&lt;<span class="number">0</span>, Base, Cs...&gt;::value[];</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;integer X, integer Base = <span class="number">10</span>&gt;</span><br><span class="line">struct itoax : <span class="keyword">public</span> itoaxx&lt;X, Base&gt; &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;integer Base&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">itoax</span>&lt;0, Base&gt; &#123;</span></span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">char</span> value[] = &#123;<span class="string">'0'</span>, <span class="number">0</span>&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;integer Base&gt;</span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">char</span> itoax&lt;<span class="number">0</span>, Base&gt;::value[];</span><br></pre></td></tr></table></figure></p>
+<p>其实只用一个类就可以实现除了 0 之外的所有的进制转换，但 0 是终止条件，转换会得到一个空字符串，所以再套一个类做一个 0 的偏特化就可以了。<br>在这个解法里，利用继承和参数包传递解决了上面char[] 和 char 无法组合成 char[]的问题，主要思想就是把所有的字符利用继承以参数包的形式全部传递给终止条件：X=0的特化，在这个特化里把参数包展开到 value 的初始化列表里。</p>
+<h2 id="使用-enum"><a href="#使用-enum" class="headerlink" title="使用 enum"></a>使用 enum</h2><p>上面很多类里的 value 除了要在类里面声明，还需要在类外定义一下（通常在 cpp 文件里），非常麻烦，使用 enum 就可以避免多写一句（还有可能要新建个 cpp 文件）：</p>
+<h3 id="使用前"><a href="#使用前" class="headerlink" title="使用前"></a>使用前</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A.h</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>&#123;</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">int</span> value = <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// A.cpp</span></span><br><span class="line"><span class="keyword">constexpr</span> <span class="keyword">int</span> A::value;</span><br></pre></td></tr></table></figure>
+<h3 id="使用后"><a href="#使用后" class="headerlink" title="使用后"></a>使用后</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A.h</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>&#123;</span></span><br><span class="line">    <span class="keyword">enum</span>&#123;</span><br><span class="line">        value = <span class="number">0</span> <span class="comment">// 自动 static constexpr</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="编译器：我太难了"><a href="#编译器：我太难了" class="headerlink" title="编译器：我太难了"></a>编译器：我太难了</h2>
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#constexpr-函数"><span class="toc-number">1.</span> <span class="toc-text">constexpr 函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译期-itoa"><span class="toc-number">2.</span> <span class="toc-text">编译期 itoa</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-enum"><span class="toc-number">3.</span> <span class="toc-text">使用 enum</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用前"><span class="toc-number">3.1.</span> <span class="toc-text">使用前</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用后"><span class="toc-number">3.2.</span> <span class="toc-text">使用后</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译器：我太难了"><span class="toc-number">4.</span> <span class="toc-text">编译器：我太难了</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&text=c++模板技巧(二)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&title=c++模板技巧(二)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&is_video=false&description=c++模板技巧(二)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=c++模板技巧(二)&body=Check out this article: https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&title=c++模板技巧(二)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&title=c++模板技巧(二)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&title=c++模板技巧(二)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&title=c++模板技巧(二)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://blog.cildhdi.cn/2019/10/10/c-模板技巧-二/&name=c++模板技巧(二)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Miles Yang
+  </div>
+  <a href="http://www.beian.miit.gov.cn/">鄂ICP备19009500号-2</a>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>

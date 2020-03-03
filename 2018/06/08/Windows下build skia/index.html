@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="skia官方文档 说明 以下所有命令均在命令行（cmd）中执行，在power shell中可能出现操作不成功但不报错的情况。 安装git并配置以及python 2.7.x（python 3会出错）。 需要科学上网，下载的东西还挺多。  安装depot_tools​    下载depot_tools 并解压到任意位置，然后将解压的文件夹添加到系统环境变量中（需要移动到python的路径之前），最后在">
+<meta name="keywords" content="lib">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows下build skia">
+<meta property="og:url" content="https://blog.cildhdi.cn/2018/06/08/Windows下build skia/index.html">
+<meta property="og:site_name" content="Cildhdi&#39;s BB space">
+<meta property="og:description" content="skia官方文档 说明 以下所有命令均在命令行（cmd）中执行，在power shell中可能出现操作不成功但不报错的情况。 安装git并配置以及python 2.7.x（python 3会出错）。 需要科学上网，下载的东西还挺多。  安装depot_tools​    下载depot_tools 并解压到任意位置，然后将解压的文件夹添加到系统环境变量中（需要移动到python的路径之前），最后在">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-01-18T05:31:29.389Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Windows下build skia">
+<meta name="twitter:description" content="skia官方文档 说明 以下所有命令均在命令行（cmd）中执行，在power shell中可能出现操作不成功但不报错的情况。 安装git并配置以及python 2.7.x（python 3会出错）。 需要科学上网，下载的东西还挺多。  安装depot_tools​    下载depot_tools 并解压到任意位置，然后将解压的文件夹添加到系统环境变量中（需要移动到python的路径之前），最后在">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>Windows下build skia</title>
+    <!-- styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- persian styles -->
+    
+      <link rel="stylesheet" href="/css/rtl.css">
+    
+    <!-- rss -->
+    
+    
+</head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/06/16/解决头文件互相包含的问题/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/05/25/KrUI-列表绘制/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&text=Windows下build skia"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&title=Windows下build skia"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&is_video=false&description=Windows下build skia"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Windows下build skia&body=Check out this article: https://blog.cildhdi.cn/2018/06/08/Windows下build skia/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&title=Windows下build skia"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&title=Windows下build skia"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&title=Windows下build skia"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&title=Windows下build skia"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&name=Windows下build skia&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#skia"><span class="toc-number">1.</span> <span class="toc-text">skia</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#说明"><span class="toc-number">2.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装depot-tools"><span class="toc-number">3.</span> <span class="toc-text">安装depot_tools</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载skia"><span class="toc-number">4.</span> <span class="toc-text">下载skia</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生成build文件"><span class="toc-number">5.</span> <span class="toc-text">生成build文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译"><span class="toc-number">6.</span> <span class="toc-text">编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用vs"><span class="toc-number">7.</span> <span class="toc-text">使用vs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#有关x86与x64"><span class="toc-number">8.</span> <span class="toc-text">有关x86与x64</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Windows下build skia
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Cildhdi's BB space</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-06-08T06:57:14.000Z" itemprop="datePublished">2018-06-08</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/lib/">lib</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h2 id="skia"><a href="#skia" class="headerlink" title="skia"></a>skia</h2><p><a href="https://skia.org" target="_blank" rel="noopener">官方文档</a></p>
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><ul>
+<li>以下所有命令均在命令行（cmd）中执行，在power shell中可能出现操作不成功但不报错的情况。</li>
+<li>安装git并配置以及python 2.7.x（python 3会出错）。</li>
+<li>需要科学上网，下载的东西还挺多。</li>
+</ul>
+<h2 id="安装depot-tools"><a href="#安装depot-tools" class="headerlink" title="安装depot_tools"></a>安装depot_tools</h2><p>​    下载<a href="https://storage.googleapis.com/chrome-infra/depot_tools.zip" target="_blank" rel="noopener">depot_tools</a> 并解压到任意位置，然后将解压的文件夹添加到系统环境变量中（需要移动到python的路径之前），最后在cmd中输入ninja并回车，没有报错的话就可以下一步了。</p>
+<h2 id="下载skia"><a href="#下载skia" class="headerlink" title="下载skia"></a>下载skia</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://skia.googlesource.com/skia.git</span><br></pre></td></tr></table></figure>
+<p>进入skia目录后，执行以下命令来安装依赖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python tools/git-sync-deps</span><br></pre></td></tr></table></figure>
+<h2 id="生成build文件"><a href="#生成build文件" class="headerlink" title="生成build文件"></a>生成build文件</h2><p>​    生成build文件需要运行bin目录下的GN，为了方便，直接把bin目录添加到环境变量中。然后运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/gn gen out/Shared --args=&apos;is_official_build=true is_component_build=true&apos;</span><br></pre></td></tr></table></figure>
+<p>来生成动态链接库的构建文件。还有其他的生成方式，具体见官方说明。</p>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ninja -C out/Shared</span><br></pre></td></tr></table></figure>
+<p>可能会编译一段时间，完成后在out/Shared文件夹中就可以找到对应的dll文件。</p>
+<h2 id="使用vs"><a href="#使用vs" class="headerlink" title="使用vs"></a>使用vs</h2><p>在运行生成构建文件时，传入 —ide=vs 参数，然后运行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python gn/gn_meta_sln.py</span><br></pre></td></tr></table></figure>
+<p>就会在out文件夹里生成sln文件，找到后打开就可以开始编译了。</p>
+<h2 id="有关x86与x64"><a href="#有关x86与x64" class="headerlink" title="有关x86与x64"></a>有关x86与x64</h2><p>​    上述方法生成的目标平台都是x64，因此在我使用vs来构建时，我尝试在配置管理器中添加了Win32的配置，用最后生成的dll文件写了一个简单的测试，编译时还是报错目标平台不匹配。在官方文档中有提到如何构建32位版本的skia，可能是由于网络问题或者其他的，一直都没有构建成功，暂时也没找到其他的办法，只好放弃了……….</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#skia"><span class="toc-number">1.</span> <span class="toc-text">skia</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#说明"><span class="toc-number">2.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装depot-tools"><span class="toc-number">3.</span> <span class="toc-text">安装depot_tools</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#下载skia"><span class="toc-number">4.</span> <span class="toc-text">下载skia</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生成build文件"><span class="toc-number">5.</span> <span class="toc-text">生成build文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译"><span class="toc-number">6.</span> <span class="toc-text">编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用vs"><span class="toc-number">7.</span> <span class="toc-text">使用vs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#有关x86与x64"><span class="toc-number">8.</span> <span class="toc-text">有关x86与x64</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&text=Windows下build skia"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&title=Windows下build skia"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&is_video=false&description=Windows下build skia"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Windows下build skia&body=Check out this article: https://blog.cildhdi.cn/2018/06/08/Windows下build skia/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&title=Windows下build skia"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&title=Windows下build skia"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&title=Windows下build skia"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&title=Windows下build skia"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=https://blog.cildhdi.cn/2018/06/08/Windows下build skia/&name=Windows下build skia&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy; 2020 Miles Yang
+  </div>
+  <a href="http://www.beian.miit.gov.cn/">鄂ICP备19009500号-2</a>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+    <!-- jquery -->
+<script src="/lib/jquery/jquery.min.js"></script>
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
